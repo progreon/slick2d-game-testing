@@ -29,12 +29,15 @@ public class MenuState extends BasicGameState {
 
     @Override
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
-        Image btnPlayImage = createButtonImage("Play?", java.awt.Color.yellow, java.awt.Color.red);
-        Image btnPlayImageOver = createButtonImage("Let's play!", java.awt.Color.red, java.awt.Color.yellow);
+//        Image btnPlayImage = createButtonImage("Play?", Color.yellow, Color.red);
+//        Image btnPlayImageOver = createButtonImage("Let's play!", Color.red, Color.yellow);
+        Image btnPlayImage = new Image("images/btnPlay.png");
+        Image btnPlayImageOver = new Image("images/btnPlay2.png");
         
         int x = (container.getWidth() - btnPlayImage.getWidth())/2;
         int y = (container.getHeight() - btnPlayImage.getHeight())/2;
-        btnPlay = new MouseOverArea(container, btnPlayImage, x, y, new ComponentListener() {
+        btnPlay = new MouseOverArea(container, btnPlayImage, x, y, btnPlayImage.getWidth(), btnPlayImage.getHeight(), 
+                                    new ComponentListener() {
 
             @Override
             public void componentActivated(AbstractComponent source) {
@@ -42,7 +45,6 @@ public class MenuState extends BasicGameState {
             }
         });
         btnPlay.setMouseOverImage(btnPlayImageOver);
-        System.out.println("btnPlay: " + btnPlay.getX() + ", " + btnPlay.getY() + ", " + btnPlay.getWidth() + ", " + btnPlay.getHeight());
     }
 
     @Override
@@ -52,15 +54,18 @@ public class MenuState extends BasicGameState {
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+        if (container.getInput().isKeyDown(Input.KEY_P)) {
+            game.enterState(PlayState.ID);
+        }
     }
     
-    private Image createButtonImage(String text, java.awt.Color fgColor, java.awt.Color bgColor) throws SlickException {
+    private Image createButtonImage(String text, Color fgColor, Color bgColor) throws SlickException {
         Image btnImg = new Image(100, 30);
         Graphics g = btnImg.getGraphics();
-        g.setColor(new Color(bgColor.getRGB()));
+        g.setColor(bgColor);
         g.fillRect(0, 0, btnImg.getWidth(), btnImg.getHeight());
-        g.setColor(new Color(fgColor.getRGB()));
-        g.setFont(new TrueTypeFont(new java.awt.Font(java.awt.Font.DIALOG, java.awt.Font.BOLD, 18), false));
+        g.setColor(fgColor);
+        g.setFont(new TrueTypeFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 18), false));
         int textX = (btnImg.getWidth() - g.getFont().getWidth(text)) / 2;
         int textY = (btnImg.getHeight() - g.getFont().getHeight(text)) / 2;
         g.drawString(text, textX, textY);
