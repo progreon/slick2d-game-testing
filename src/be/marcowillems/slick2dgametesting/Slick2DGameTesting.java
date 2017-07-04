@@ -6,10 +6,12 @@
 package be.marcowillems.slick2dgametesting;
 
 import be.marcowillems.slick2dgametesting.game.Game;
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.newdawn.slick.*;
@@ -22,11 +24,14 @@ public class Slick2DGameTesting {
 
     /**
      * @param args the command line arguments
+     * @throws java.lang.NoSuchFieldException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.net.URISyntaxException
      */
     public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException, URISyntaxException {
         loadNativeLibraries();
         System.out.println(System.getProperty("java.library.path"));
-        
+
         AppGameContainer appgc;
         try {
             appgc = new AppGameContainer(new Game("Slick2D Game Testing"));
@@ -36,7 +41,7 @@ public class Slick2DGameTesting {
             Logger.getLogger(Slick2DGameTesting.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private static boolean loadNativeLibraries() {
         try {
             String nativeLibDir = new File(Slick2DGameTesting.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent() + File.separator + "lib/lwjgl-native/";
@@ -56,7 +61,7 @@ public class Slick2DGameTesting {
             }
             System.setProperty("java.library.path", System.getProperty("java.library.path") + File.pathSeparator + OSDir);
             Field field = ClassLoader.class.getDeclaredField("sys_paths");
-            field.setAccessible( true );
+            field.setAccessible(true);
             field.set(null, null);
             return true;
         } catch (URISyntaxException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
@@ -64,5 +69,14 @@ public class Slick2DGameTesting {
             return false;
         }
     }
-    
+
+    private static void printDisplayModes() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        System.out.println("Available Display Modes:");
+        for (DisplayMode dm : gd.getDisplayModes()) {
+            System.out.println("\t [" + dm.getWidth() + "," + dm.getHeight() + ":" + dm.getRefreshRate() + "]");
+        }
+    }
+
 }

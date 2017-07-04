@@ -16,22 +16,27 @@ public class PlayState extends BasicGameState {
 
     public static final int ID = 1;
 
+    private int elapsedTicks = 0;
+    private int elapsedTime = 0;
+    private int tps = 0;
+
     private final int SCALE = 3;
     private final int TILE_SIZE = 8;
     private SpriteSheet spriteSheet;
     private final Image[] arrows;
+    private final Animation[] animatedArrows;
 
     // TODO: to a map class
     private final int[][] mapTileIDs;
     private final int mapWidth;
     private final int mapHeight;
-    
+
     // TODO: to (a) location class(es)?
     private int mapCenterX;
     private int mapCenterY;
     private int playerMapX;
     private int playerMapY;
-    
+
     // TODO: to (a) location class(es)?
     private final boolean moveByTile = true;
     private final boolean centerPlayer = true;
@@ -60,6 +65,7 @@ public class PlayState extends BasicGameState {
         mapWidth = mapTileIDs.length * TILE_SIZE;
         mapHeight = mapTileIDs[0].length * TILE_SIZE;
         arrows = new Image[4];
+        animatedArrows = new Animation[4];
     }
 
     @Override
@@ -75,6 +81,15 @@ public class PlayState extends BasicGameState {
         for (int i = 0; i < 4; i++) {
             arrows[i] = spriteSheet.getSprite(i, 1);
             arrows[i].setFilter(Image.FILTER_NEAREST);
+
+            Image animatedArrow0 = spriteSheet.getSprite(i, 1);
+            animatedArrow0.setFilter(Image.FILTER_NEAREST);
+            Image animatedArrow1 = spriteSheet.getSprite(i, 1);
+            animatedArrow1.setFilter(Image.FILTER_NEAREST);
+            animatedArrow0.getGraphics().setColor(Color.blue);
+            animatedArrow0.getGraphics().drawRect(0, 0, animatedArrow0.getWidth() - 1, animatedArrow0.getHeight() - 1);
+            animatedArrow0.getGraphics().flush();
+            animatedArrows[i] = new Animation(new Image[]{animatedArrow0, animatedArrow1}, 200);
         }
 
         centerMapAtTile(3, 7);
@@ -83,7 +98,7 @@ public class PlayState extends BasicGameState {
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-        g.drawString("x: " + playerMapX + "\ny: " + playerMapY, 25, 25);
+        g.drawString("TPS: " + tps + "\nx: " + playerMapX + "\ny: " + playerMapY, 10, 30);
         g.scale(SCALE, SCALE);
 
         spriteSheet.startUse();
@@ -94,7 +109,8 @@ public class PlayState extends BasicGameState {
         }
         spriteSheet.endUse();
 
-        arrows[direction].draw(getPlayerX(container), getPlayerY(container));
+//        arrows[direction].draw(getPlayerX(container), getPlayerY(container));
+        animatedArrows[direction].draw(getPlayerX(container), getPlayerY(container));
     }
 
     @Override
@@ -136,6 +152,13 @@ public class PlayState extends BasicGameState {
                 moving = false;
             }
         }
+        elapsedTicks++;
+        elapsedTime += delta;
+        if (elapsedTime >= 1000) {
+            tps = elapsedTicks;
+            elapsedTime -= 1000;
+            elapsedTicks = 0;
+        }
     }
 
     private void renderTileByID(GameContainer container, SpriteSheet ss, int tileID, int x, int y) {
@@ -155,7 +178,7 @@ public class PlayState extends BasicGameState {
         playerMapX = TILE_SIZE / 2 + TILE_SIZE * x;
         playerMapY = TILE_SIZE / 2 + TILE_SIZE * y;
     }
-    
+
     // TODO: to (a) location class(es)?
     private void movePlayer(int direction, int delta) {
         switch (direction) {

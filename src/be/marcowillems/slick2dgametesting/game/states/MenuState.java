@@ -14,9 +14,9 @@ import org.newdawn.slick.state.*;
  * @author Marco
  */
 public class MenuState extends BasicGameState {
-    
+
     public static final int ID = 0;
-    
+
     private MouseOverArea btnPlay;
 
     public MenuState() {
@@ -33,17 +33,17 @@ public class MenuState extends BasicGameState {
 //        Image btnPlayImageOver = createButtonImage("Let's play!", Color.red, Color.yellow);
         Image btnPlayImage = new Image("images/btnPlay.png");
         Image btnPlayImageOver = new Image("images/btnPlay2.png");
-        
-        int x = (container.getWidth() - btnPlayImage.getWidth())/2;
-        int y = (container.getHeight() - btnPlayImage.getHeight())/2;
-        btnPlay = new MouseOverArea(container, btnPlayImage, x, y, btnPlayImage.getWidth(), btnPlayImage.getHeight(), 
-                                    new ComponentListener() {
 
-            @Override
-            public void componentActivated(AbstractComponent source) {
-                game.enterState(PlayState.ID);
-            }
-        });
+        int x = (container.getWidth() - btnPlayImage.getWidth()) / 2;
+        int y = (container.getHeight() - btnPlayImage.getHeight()) / 2;
+        btnPlay = new MouseOverArea(container, btnPlayImage, x, y, btnPlayImage.getWidth(), btnPlayImage.getHeight(),
+                new ComponentListener() {
+
+                    @Override
+                    public void componentActivated(AbstractComponent source) {
+                        game.enterState(PlayState.ID);
+                    }
+                });
         btnPlay.setMouseOverImage(btnPlayImageOver);
     }
 
@@ -58,7 +58,7 @@ public class MenuState extends BasicGameState {
             game.enterState(PlayState.ID);
         }
     }
-    
+
     private Image createButtonImage(String text, Color fgColor, Color bgColor) throws SlickException {
         Image btnImg = new Image(100, 30);
         Graphics g = btnImg.getGraphics();
@@ -70,8 +70,8 @@ public class MenuState extends BasicGameState {
         int textY = (btnImg.getHeight() - g.getFont().getHeight(text)) / 2;
         g.drawString(text, textX, textY);
         g.destroy();
-        
+
         return btnImg;
     }
-    
+
 }
