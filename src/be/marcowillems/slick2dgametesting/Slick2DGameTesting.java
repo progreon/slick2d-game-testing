@@ -31,6 +31,7 @@ public class Slick2DGameTesting {
         try {
             appgc = new AppGameContainer(new Game("Slick2D Game Testing"));
             appgc.setDisplayMode(Game.WINDOW_WIDTH, Game.WINDOW_HEIGHT, false);
+            appgc.setVSync(true);
             appgc.start();
         } catch (SlickException ex) {
             Logger.getLogger(Slick2DGameTesting.class.getName()).log(Level.SEVERE, null, ex);

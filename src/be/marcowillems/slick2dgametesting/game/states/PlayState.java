@@ -25,13 +25,13 @@ public class PlayState extends BasicGameState {
     private final int[][] mapTileIDs;
     private final int mapWidth;
     private final int mapHeight;
-    
+
     // TODO: to (a) location class(es)?
     private int mapCenterX;
     private int mapCenterY;
     private int playerMapX;
     private int playerMapY;
-    
+
     // TODO: to (a) location class(es)?
     private final boolean moveByTile = true;
     private final boolean centerPlayer = true;
@@ -42,6 +42,9 @@ public class PlayState extends BasicGameState {
     private boolean moving = false;
     private int direction = 0; // 0 = down, 1 = left, 2 = up, 3 = right
     private int moved = 0;
+    private int previousDirection = 0;
+    private int turnFrameCount = 0;
+    private final int TURN_FRAMES = 40;
 //    private final int waitMillis = 100;
 //    private int waitMillisPast = 0;
 
@@ -103,23 +106,32 @@ public class PlayState extends BasicGameState {
         if (input.isKeyDown(Input.KEY_ESCAPE)) {
             game.enterState(MenuState.ID);
         }
+        int newDirection = -1;
+        if (input.isKeyDown(Input.KEY_DOWN)) {
+            newDirection = 0;
+        }
+        if (input.isKeyDown(Input.KEY_LEFT)) {
+            newDirection = 1;
+        }
+        if (input.isKeyDown(Input.KEY_UP)) {
+            newDirection = 2;
+        }
+        if (input.isKeyDown(Input.KEY_RIGHT)) {
+            newDirection = 3;
+        }
         if (!moving) {
-            if (input.isKeyDown(Input.KEY_DOWN)) {
-                moving = true;
-                direction = 0;
+            if (newDirection >= 0) {
+                if (turnFrameCount < TURN_FRAMES && previousDirection != newDirection) {
+                    turnFrameCount++;
+                } else {
+                    moving = true;
+                }
+                direction = newDirection;
+            } else {
+                turnFrameCount = 0;
             }
-            if (input.isKeyDown(Input.KEY_LEFT)) {
-                moving = true;
-                direction = 1;
-            }
-            if (input.isKeyDown(Input.KEY_UP)) {
-                moving = true;
-                direction = 2;
-            }
-            if (input.isKeyDown(Input.KEY_RIGHT)) {
-                moving = true;
-                direction = 3;
-            }
+        } else {
+            turnFrameCount = TURN_FRAMES;
         }
         if (moving) {
             if (moveByTile) {
@@ -130,10 +142,12 @@ public class PlayState extends BasicGameState {
                 }
                 if (moved == 0) {
                     moving = false;
+                    previousDirection = direction;
                 }
             } else {
                 movePlayer(direction, MOVE_DELTA);
                 moving = false;
+                previousDirection = direction;
             }
         }
     }
@@ -155,7 +169,7 @@ public class PlayState extends BasicGameState {
         playerMapX = TILE_SIZE / 2 + TILE_SIZE * x;
         playerMapY = TILE_SIZE / 2 + TILE_SIZE * y;
     }
-    
+
     // TODO: to (a) location class(es)?
     private void movePlayer(int direction, int delta) {
         switch (direction) {
