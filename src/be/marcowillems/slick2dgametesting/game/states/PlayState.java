@@ -49,7 +49,7 @@ public class PlayState extends BasicGameState {
     private int moved = 0;
     private int previousDirection = 0;
     private int turnFrameCount = 0;
-    private final int TURN_FRAMES = 40;
+    private final int TURN_FRAMES = 4;
 //    private final int waitMillis = 100;
 //    private int waitMillisPast = 0;
 
